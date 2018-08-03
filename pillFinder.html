@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <title>Pill Finder</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </head>
+
+  <body class='container'>
+
+    <!-- <div id='example'> -->
+      <!-- our example of lipitor will be loaded via javascript -->
+    <!-- </div> -->
+
+    <hr />
+
+    <div id='search'>
+      <!-- this will be our search input and button -->
+       <input type="text" class="form-control" placeholder="Enter Drug Name" id = "textInput">
+       <br />
+       <button class='btn btn-primary' id='submit'>Search for pictures!</button>
+    </div>
+
+    <div>
+      <br />
+    </div>
+
+    <div id='result'>
+      <!-- we will populate this via javascript -->
+    </div>
+
+  </body>
+</html>
+
+<script>
+  function createThumbnailHtml(imageUrl, name) {
+    // takes an image url and a name and retruns HTML that can be later inserted
+    return `<div class="col-xs-6 col-md-3">
+      <a href="${imageUrl}" class="thumbnail">
+        <img src="${imageUrl}">
+        <p>${name}
+      </a>
+    </div>`
+  };
+
+  // const data = [
+  //   {
+  //     imageUrl: "https://rxpillimage.nlm.nih.gov/RxImage/image/images/gallery/original/00071-0156-23_RXNAVIMAGE10_741C3A41.jpg",
+  //     name: "atorvastatin 20 MG Oral Tablet [Lipitor]"
+  //   },
+  //   {
+  //     imageUrl: "https://rxpillimage.nlm.nih.gov/RxImage/image/images/gallery/original/00071-0157-23_RXNAVIMAGE10_4E1B2769.jpg",
+  //     name: "atorvastatin 40 MG Oral Tablet [Lipitor]"
+  //   }
+  // ];
+  // const elem = document.getElementById('example');
+
+  function insertDataAsHtml(d, elementToInsert) {
+    // generate the html and attach it to the element
+    const item = createThumbnailHtml(d.imageUrl, d.name);
+    elementToInsert.insertAdjacentHTML('beforeEnd', item);
+  };
+
+  // data.forEach(function(d){
+  //   insertDataAsHtml(d, document.getElementById('example'))
+  // });
+
+  const btn = document.getElementById('submit');
+  btn.addEventListener('click', function() {
+    console.log('ouch');
+    const input=document.getElementById('textInput');
+    console.log('the text input is:', input.value);
+    const url = `https://rximage.nlm.nih.gov/api/rximage/1/rxnav?name=${input.value}`;
+    console.log('the url will be', url);
+    document.getElementById('result').innerHTML='';
+    fetch(url)
+    .then(function(response){
+      return response.json();
+    })
+    .then(function(json){
+      const itemList = json.nlmRxImages;
+      itemList.forEach(function(d){
+        insertDataAsHtml(d, document.getElementById('result'))
+      });
+    })
+    .catch(function(error){
+      console.log(error);
+    })
+  })
+
+</script>
